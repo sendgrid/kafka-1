@@ -356,7 +356,8 @@ func (cg *ConsumerGroup) partitionConsumer(topic string, partition int32, messag
 	default:
 	}
 
-	for maxRetries, tries := 3, 0; tries < maxRetries; tries++ {
+	maxRetries := int(cg.config.Offsets.ProcessingTimeout/time.Second) + 3
+	for tries := 0; tries < maxRetries; tries++ {
 		if err := cg.instance.ClaimPartition(topic, partition); err == nil {
 			break
 		} else if err == kazoo.ErrPartitionClaimedByOther && tries+1 < maxRetries {
