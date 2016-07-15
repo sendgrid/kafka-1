@@ -3,6 +3,7 @@ package consumergroup
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -105,6 +106,14 @@ func JoinConsumerGroup(name string, topics []string, zookeeper []string, config 
 	// Validate configuration
 	if err = config.Validate(); err != nil {
 		return
+	}
+
+	// check for namespaces
+	for index, zkServer := range zookeeper {
+		if strings.Contains(zkServer, "/") {
+			_, config.Zookeeper.Chroot = kazoo.ParseConnectionString(zkServer)
+			zookeeper[index] = zkServer[0:strings.Index(zkServer, "/")]
+		}
 	}
 
 	var kz *kazoo.Kazoo
