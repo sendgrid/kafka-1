@@ -111,7 +111,9 @@ func JoinConsumerGroup(name string, topics []string, zookeeper []string, config 
 	// check for namespaces
 	for index, zkServer := range zookeeper {
 		if strings.Contains(zkServer, "/") {
+			// set the root of the zookeeper hierarchy to what is specified in the connect string
 			_, config.Zookeeper.Chroot = kazoo.ParseConnectionString(zkServer)
+			// trim the uri of the server to exclude the root
 			zookeeper[index] = zkServer[0:strings.Index(zkServer, "/")]
 		}
 	}
