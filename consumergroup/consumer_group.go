@@ -387,7 +387,7 @@ func (cg *ConsumerGroup) partitionConsumer(topic string, partition int32, messag
 	// of messages to be processed before releasing a partition, we need to wait slightly
 	// longer than that before timing out here to ensure that another consumer has had
 	// enough time to release the partition. Hence, +2 seconds.
-	maxRetries := int(cg.config.Offsets.ProcessingTimeout/time.Second) + 2
+	maxRetries := int(cg.config.Offsets.ProcessingTimeout/time.Second) + 3
 	for tries := 0; tries < maxRetries; tries++ {
 		if err := cg.instance.ClaimPartition(topic, partition); err == nil {
 			break
